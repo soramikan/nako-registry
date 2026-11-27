@@ -1,0 +1,8 @@
+{
+  "name": "nako-id07-check",
+  "private": true,
+  "description": "ID-07 の node-semver 7.7.4 境界を API で確認するツール",
+  "dependencies": {
+    "semver": "7.7.4"
+  }
+}
