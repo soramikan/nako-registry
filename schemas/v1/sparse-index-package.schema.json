@@ -1,0 +1,371 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Sparse Index のパッケージとリリース一覧",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "id": {
+      "$ref": "nako-manifest.schema.json#/$defs/packageId"
+    },
+    "scope_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "updated_at": {
+      "$ref": "#/$defs/utcTimestamp"
+    },
+    "deprecated": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "versions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/version"
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "id",
+    "scope_id",
+    "updated_at",
+    "versions"
+  ],
+  "$defs": {
+    "utcTimestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "(?:[Zz]|\\+00:00)(?![\\s\\S])"
+    },
+    "provenance": {
+      "type": "object",
+      "properties": {
+        "verified": {
+          "type": "boolean"
+        },
+        "provider": {
+          "type": "string",
+          "minLength": 1
+        },
+        "repository": {
+          "type": "string",
+          "format": "uri"
+        },
+        "repository_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "commit_sha": {
+          "type": "string",
+          "minLength": 1
+        },
+        "workflow_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "run_id": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "verified"
+      ]
+    },
+    "version": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "$ref": "nako-manifest.schema.json#/$defs/publicVersion"
+        },
+        "published_at": {
+          "$ref": "#/$defs/utcTimestamp"
+        },
+        "yanked": {
+          "type": "boolean"
+        },
+        "yank_reason": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "license": {
+          "type": "string",
+          "minLength": 1
+        },
+        "capabilities": {
+          "$ref": "nako-manifest.schema.json#/$defs/capabilities"
+        },
+        "engines": {
+          "$ref": "nako-manifest.schema.json#/$defs/engines"
+        },
+        "exports_global_commands": {
+          "type": "boolean"
+        },
+        "global_commands": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "features": {
+          "$ref": "nako-manifest.schema.json#/$defs/features"
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "$ref": "npkg-metadata.schema.json#/$defs/dependency"
+          }
+        },
+        "provenance": {
+          "$ref": "#/$defs/provenance"
+        },
+        "artifacts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/artifact"
+          },
+          "minItems": 1
+        },
+        "advisories": {
+          "type": "array"
+        }
+      },
+      "required": [
+        "version",
+        "published_at",
+        "yanked",
+        "license",
+        "capabilities",
+        "engines",
+        "exports_global_commands",
+        "global_commands",
+        "features",
+        "dependencies",
+        "provenance",
+        "artifacts"
+      ],
+      "if": {
+        "properties": {
+          "exports_global_commands": {
+            "const": false
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "global_commands": {
+            "maxItems": 0
+          }
+        }
+      }
+    },
+    "artifact": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "$ref": "npkg-metadata.schema.json#/$defs/kind"
+        },
+        "runtimes": {
+          "$ref": "nako-manifest.schema.json#/$defs/runtimes"
+        },
+        "target": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "hosting": {
+          "enum": [
+            "registry",
+            "external"
+          ]
+        },
+        "url": {
+          "$ref": "sparse-index-config.schema.json#/$defs/httpsUrl"
+        },
+        "sha256": {
+          "$ref": "nako-manifest.schema.json#/$defs/sha256"
+        },
+        "size": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "kind",
+        "runtimes",
+        "target",
+        "hosting",
+        "url",
+        "sha256",
+        "size"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "required": [
+              "kind"
+            ],
+            "properties": {
+              "kind": {
+                "const": "universal"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "runtimes": {
+                "type": "array",
+                "items": {
+                  "$ref": "nako-manifest.schema.json#/$defs/runtime"
+                },
+                "minItems": 3,
+                "maxItems": 3,
+                "uniqueItems": true
+              },
+              "target": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "target"
+            ]
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "kind"
+            ],
+            "properties": {
+              "kind": {
+                "const": "esm"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "runtimes": {
+                "$ref": "nako-manifest.schema.json#/$defs/esmRuntimes"
+              },
+              "target": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "target"
+            ]
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "kind"
+            ],
+            "properties": {
+              "kind": {
+                "const": "native-source"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "runtimes": {
+                "const": [
+                  "lnako"
+                ]
+              },
+              "target": {
+                "type": "object",
+                "properties": {
+                  "abi_version": {
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "abi_version"
+                ]
+              }
+            },
+            "required": [
+              "target"
+            ]
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "kind"
+            ],
+            "properties": {
+              "kind": {
+                "const": "native-prebuilt"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "runtimes": {
+                "const": [
+                  "lnako"
+                ]
+              },
+              "target": {
+                "type": "object",
+                "properties": {
+                  "target_triple": {
+                    "$ref": "npkg-metadata.schema.json#/$defs/targetTriple"
+                  },
+                  "abi_version": {
+                    "type": "integer"
+                  },
+                  "glibc_min": {
+                    "$ref": "npkg-metadata.schema.json#/$defs/glibcVersion"
+                  }
+                },
+                "required": [
+                  "target_triple",
+                  "abi_version"
+                ],
+                "if": {
+                  "required": [
+                    "target_triple"
+                  ],
+                  "properties": {
+                    "target_triple": {
+                      "type": "string",
+                      "pattern": "^[^-]+-linux-gnu(?![\\s\\S])"
+                    }
+                  }
+                },
+                "then": {
+                  "required": [
+                    "glibc_min"
+                  ]
+                },
+                "else": {
+                  "not": {
+                    "required": [
+                      "glibc_min"
+                    ]
+                  }
+                }
+              }
+            },
+            "required": [
+              "target"
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

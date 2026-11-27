@@ -1,0 +1,101 @@
+{
+  "schema_version": 1,
+  "id": "@soramikan/http",
+  "scope_id": "01936d2a-8c4f-7b12-9a01-3e4f5a6b7c8d",
+  "updated_at": "2026-11-27T13:30:00Z",
+  "deprecated": null,
+  "versions": [
+    {
+      "version": "1.2.0",
+      "published_at": "2026-11-27T13:30:00Z",
+      "yanked": false,
+      "yank_reason": null,
+      "license": "MIT",
+      "capabilities": ["net", "native"],
+      "engines": {
+        "lnako": ">=0.3.0 <1.0.0",
+        "cnako": ">=3.6.0",
+        "wnako": ">=3.6.0"
+      },
+      "exports_global_commands": true,
+      "global_commands": ["HTTP取得"],
+      "features": {
+        "default": ["tls"],
+        "tls": [],
+        "http3": ["tls"]
+      },
+      "dependencies": [
+        {
+          "id": "@std/json",
+          "req": "^1.0.0",
+          "features": [],
+          "default_features": true,
+          "optional": false,
+          "runtimes": ["lnako", "cnako", "wnako"]
+        },
+        {
+          "id": "@std/tls",
+          "req": "^1.0.0",
+          "features": [],
+          "default_features": true,
+          "optional": false,
+          "runtimes": ["lnako"]
+        }
+      ],
+      "provenance": {
+        "verified": true,
+        "provider": "github-actions",
+        "repository": "https://github.com/soramikan/nako-http",
+        "repository_id": "123456789",
+        "commit_sha": "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2",
+        "workflow_ref": ".github/workflows/release.yml@refs/tags/v1.2.0",
+        "run_id": "9876543210"
+      },
+      "artifacts": [
+        {
+          "kind": "universal",
+          "runtimes": ["lnako", "cnako", "wnako"],
+          "target": null,
+          "hosting": "registry",
+          "url": "https://cdn.registry.nako.example/artifacts/soramikan/http/1.2.0/soramikan__http-1.2.0-universal.npkg",
+          "sha256": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+          "size": 14280
+        },
+        {
+          "kind": "esm",
+          "runtimes": ["cnako", "wnako"],
+          "target": null,
+          "hosting": "registry",
+          "url": "https://cdn.registry.nako.example/artifacts/soramikan/http/1.2.0/soramikan__http-1.2.0-esm-cnako+wnako.npkg",
+          "sha256": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+          "size": 28410
+        },
+        {
+          "kind": "native-source",
+          "runtimes": ["lnako"],
+          "target": {
+            "abi_version": 1
+          },
+          "hosting": "registry",
+          "url": "https://cdn.registry.nako.example/artifacts/soramikan/http/1.2.0/soramikan__http-1.2.0-native-source.npkg",
+          "sha256": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+          "size": 52100
+        },
+        {
+          "kind": "native-prebuilt",
+          "runtimes": ["lnako"],
+          "target": {
+            "target_triple": "x86_64-linux-gnu",
+            "abi_version": 1,
+            "glibc_min": "2.31"
+          },
+          "hosting": "registry",
+          "url": "https://cdn.registry.nako.example/artifacts/soramikan/http/1.2.0/soramikan__http-1.2.0-native-x86_64-linux-gnu-abi1.npkg",
+          "sha256": "sha256:4444444444444444444444444444444444444444444444444444444444444444",
+          "size": 495120
+        }
+      ],
+      "advisories": []
+    }
+  ]
+}

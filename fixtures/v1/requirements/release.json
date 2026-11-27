@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "id": "@soramikan/http",
+  "version": "1.2.0",
+  "uploaded_artifacts": [
+    {
+      "filename": "soramikan__http-1.2.0-universal.npkg",
+      "sha256": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+    },
+    {
+      "filename": "soramikan__http-1.2.0-native-x86_64-linux-gnu-abi1.npkg",
+      "sha256": "sha256:4444444444444444444444444444444444444444444444444444444444444444"
+    }
+  ],
+  "external_artifacts": []
+}

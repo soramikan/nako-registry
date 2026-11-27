@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "中央公開 API の release パート",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "id": {
+      "$ref": "nako-manifest.schema.json#/$defs/packageId"
+    },
+    "version": {
+      "$ref": "nako-manifest.schema.json#/$defs/publicVersion"
+    },
+    "uploaded_artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "filename": {
+            "type": "string",
+            "pattern": "^[^/\\\\\\u0000-\\u001f\\u007f-\\u009f]+\\.npkg(?![\\s\\S])"
+          },
+          "sha256": {
+            "$ref": "nako-manifest.schema.json#/$defs/sha256"
+          }
+        },
+        "required": [
+          "filename",
+          "sha256"
+        ]
+      },
+      "minItems": 1
+    },
+    "external_artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "$ref": "sparse-index-config.schema.json#/$defs/httpsUrl"
+          },
+          "sha256": {
+            "$ref": "nako-manifest.schema.json#/$defs/sha256"
+          }
+        },
+        "required": [
+          "url",
+          "sha256"
+        ]
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "id",
+    "version",
+    "uploaded_artifacts"
+  ]
+}

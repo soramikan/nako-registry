@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "COMMANDS.json のエクスポート別シンボル一覧",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "exports_global_commands": {
+      "type": "boolean"
+    },
+    "exports": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "binding": {
+            "$ref": "nako-manifest.schema.json#/$defs/binding"
+          },
+          "commands": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/command"
+            }
+          },
+          "constants": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "binding",
+          "commands",
+          "constants"
+        ]
+      },
+      "propertyNames": {
+        "$ref": "nako-manifest.schema.json#/$defs/subpath"
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "exports_global_commands",
+    "exports"
+  ],
+  "if": {
+    "properties": {
+      "exports": {
+        "not": {
+          "additionalProperties": {
+            "properties": {
+              "binding": {
+                "const": "scoped"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "then": {
+    "properties": {
+      "exports_global_commands": {
+        "const": true
+      }
+    }
+  },
+  "else": {
+    "properties": {
+      "exports_global_commands": {
+        "const": false
+      }
+    }
+  },
+  "$defs": {
+    "command": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "type": "string",
+          "minLength": 1
+        },
+        "args": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1
+              },
+              "josi": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "type": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "josi"
+            ]
+          }
+        },
+        "return_type": {
+          "type": "string"
+        },
+        "async": {
+          "type": "boolean"
+        },
+        "doc": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "kind",
+        "args"
+      ]
+    }
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Sparse Index の設定",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "registry_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "api_base_url": {
+      "type": "string",
+      "format": "uri"
+    },
+    "artifact_base_url": {
+      "$ref": "#/$defs/httpsUrl"
+    },
+    "allowed_external_hosts": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "hostname"
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "registry_id",
+    "api_base_url",
+    "artifact_base_url",
+    "allowed_external_hosts"
+  ],
+  "$defs": {
+    "httpsUrl": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^[Hh][Tt][Tt][Pp][Ss]://[^/?#\\s]+"
+    }
+  }
+}

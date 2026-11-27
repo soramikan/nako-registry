@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "files": [
+    {
+      "path": "NAKO-PKG/COMMANDS.json",
+      "size": 1024,
+      "sha256": "sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+    },
+    {
+      "path": "NAKO-PKG/METADATA.toml",
+      "size": 912,
+      "sha256": "sha256:fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210"
+    },
+    {
+      "path": "native/libnako_http.so",
+      "size": 482304,
+      "sha256": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+schema_version = 1
+
+[package]
+id = "@soramikan/http"
+version = "1.2.0"
+description = "マルチランタイム対応のHTTPクライアントライブラリ"
+license = "MIT"
+repository = "https://github.com/soramikan/nako-http"
+keywords = ["http", "network", "クライアント"]
+capabilities = ["net", "native"]
+
+[artifact]
+kind = "native-prebuilt" # "universal" | "esm" | "native-source" | "native-prebuilt"
+runtimes = ["lnako"]     # 対応ランタイム配列（空不可）
+
+# kind == "native-prebuilt" の場合のみ必須
+[artifact.native]
+target_triple = "x86_64-linux-gnu"
+abi_version = 1
+glibc_min = "2.31"       # target_triple が *-linux-gnu の場合のみ必須（musl 等は省略）
+library_path = "native/libnako_http.so"
+
+[engines]
+lnako = ">=0.3.0 <1.0.0"
+
+[exports]
+"." = { entry = "src/main.nako3", binding = "scoped" }
+"./client" = { entry = "src/client.nako3", binding = "scoped" }
+"./dsl" = { entry = "src/dsl.nako3", binding = "global" }
+
+[features]
+default = ["tls"]
+tls = []
+http3 = ["tls"]
+
+# 確定した依存関係一覧（dev-dependencies は含めない）
+[[dependencies]]
+id = "@std/json"
+req = "^1.0.0"
+features = []
+default_features = true
+optional = false
+runtimes = ["lnako", "cnako", "wnako"] # 省略時は全ランタイム共通
+
+[[dependencies]]
+id = "@std/tls"
+req = "^1.0.0"
+features = []
+default_features = true
+optional = false
+runtimes = ["lnako"]

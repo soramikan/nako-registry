@@ -1,0 +1,70 @@
+schema_version = 1
+
+[package]
+id = "@soramikan/http"
+version = "1.2.0"
+description = "マルチランタイム対応のHTTPクライアントライブラリ"
+license = "MIT"
+repository = "https://github.com/soramikan/nako-http"
+homepage = "https://soramikan.github.io/nako-http"
+readme = "README.md"
+keywords = ["http", "network", "クライアント"]
+# 実行に必要な権限宣言（純粋なでしこは ["pure-nako"]）
+capabilities = ["net", "native"]
+
+# 対応する処理系バージョン要件（SemVer Range）
+[package.engines]
+lnako = ">=0.3.0 <1.0.0"
+cnako = ">=3.6.0"
+wnako = ">=3.6.0"
+
+# パッケージのエクスポート定義
+[exports]
+# デフォルトエントリポイント（"."）およびサブパス公開
+"." = { entry = "src/main.nako3", binding = "scoped" }
+"./client" = { entry = "src/client.nako3", binding = "scoped" }
+# 従来のなでしこプラグイン互換でグローバル命令を公開する場合のみ "global" を明示
+"./dsl" = { entry = "src/dsl.nako3", binding = "global" }
+
+# 機能フラグ（必ず加算的 = additive であること）
+[features]
+default = ["tls"]
+tls = []
+http3 = ["tls"]
+
+# ランタイム別ビルド・パッケージング定義
+[artifacts.universal]
+include = ["src/**/*.nako3", "LICENSE", "README.md"]
+
+[artifacts.esm]
+runtimes = ["cnako", "wnako"]
+entry = "dist/esm/index.js"
+include = ["dist/esm/**/*"]
+
+[artifacts.native]
+abi_version = 1
+source_include = ["native/build.zig", "native/src/**/*"]
+# ビルド済みバイナリの格納規則（CI で生成して pack 時に紐づけ）
+prebuilt_lib_name = "nako_http"
+
+# 依存関係（キーは必ず完全修飾名 "@scope/name"）
+[dependencies]
+"@std/json" = "^1.0.0"
+# 省略名衝突の回避や明示的別名付与は alias で指定
+"@other/json" = { version = "^2.1.0", alias = "fast_json", features = ["simd"] }
+# グローバル命令を公開するパッケージは、利用側で意図的取り込みを明示可能
+"@nako/legacy-dsl" = { version = "^0.5.0", allow_global_commands = true }
+
+# ランタイム固有の依存（任意）
+[runtime-dependencies.lnako]
+"@std/tls" = "^1.0.0"
+
+[dev-dependencies]
+"@std/test" = "^1.0.0"
+
+# プロファイル設定（マルチターゲット解決用）
+[profiles.default]
+runtime = "lnako"
+
+[profiles.web]
+runtime = "wnako"

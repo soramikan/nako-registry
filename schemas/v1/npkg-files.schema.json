@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "FILES.json のファイル索引",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "allOf": [
+              {
+                "$ref": "nako-manifest.schema.json#/$defs/relativePath"
+              },
+              {
+                "not": {
+                  "const": "NAKO-PKG/FILES.json"
+                }
+              }
+            ]
+          },
+          "size": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "sha256": {
+            "$ref": "nako-manifest.schema.json#/$defs/sha256"
+          }
+        },
+        "required": [
+          "path",
+          "size",
+          "sha256"
+        ]
+      },
+      "allOf": [
+        {
+          "contains": {
+            "properties": {
+              "path": {
+                "const": "NAKO-PKG/METADATA.toml"
+              }
+            },
+            "required": [
+              "path"
+            ]
+          }
+        },
+        {
+          "contains": {
+            "properties": {
+              "path": {
+                "const": "NAKO-PKG/COMMANDS.json"
+              }
+            },
+            "required": [
+              "path"
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "required": [
+    "schema_version",
+    "files"
+  ]
+}

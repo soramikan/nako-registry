@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "exports_global_commands": true,
+  "exports": {
+    ".": {
+      "binding": "scoped",
+      "commands": [
+        {
+          "name": "GET取得",
+          "kind": "function",
+          "args": [
+            { "name": "URL", "josi": ["を", "から"], "type": "string" }
+          ],
+          "return_type": "object",
+          "async": true,
+          "doc": "指定URLへHTTP GETリクエストを送信する"
+        }
+      ],
+      "constants": ["デフォルトタイムアウト"]
+    },
+    "./dsl": {
+      "binding": "global",
+      "commands": [
+        {
+          "name": "HTTP取得",
+          "kind": "function",
+          "args": [
+            { "name": "URL", "josi": ["を", "から"], "type": "string" }
+          ],
+          "return_type": "string",
+          "async": true,
+          "doc": "グローバル命令としてHTTP GETを実行する"
+        }
+      ],
+      "constants": []
+    }
+  }
+}

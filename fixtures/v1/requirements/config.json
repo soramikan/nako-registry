@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "registry_id": "nako-official",
+  "api_base_url": "https://api.registry.nako.example/v1",
+  "artifact_base_url": "https://cdn.registry.nako.example/artifacts",
+  "allowed_external_hosts": [
+    "github.com",
+    "objects.githubusercontent.com"
+  ]
+}

@@ -1,0 +1,277 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "METADATA.toml の JSON 変換後の構造",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "package": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "nako-manifest.schema.json#/$defs/packageId"
+        },
+        "version": {
+          "$ref": "nako-manifest.schema.json#/$defs/publicVersion"
+        },
+        "license": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string"
+        },
+        "repository": {
+          "type": "string",
+          "format": "uri"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "capabilities": {
+          "$ref": "nako-manifest.schema.json#/$defs/capabilities"
+        }
+      },
+      "required": [
+        "id",
+        "version",
+        "license"
+      ]
+    },
+    "artifact": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "$ref": "#/$defs/kind"
+        },
+        "runtimes": {
+          "$ref": "nako-manifest.schema.json#/$defs/runtimes"
+        },
+        "native": {
+          "type": "object",
+          "properties": {
+            "abi_version": {
+              "type": "integer"
+            }
+          }
+        }
+      },
+      "required": [
+        "kind",
+        "runtimes"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "required": [
+              "kind"
+            ],
+            "properties": {
+              "kind": {
+                "const": "universal"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "runtimes": {
+                "type": "array",
+                "items": {
+                  "$ref": "nako-manifest.schema.json#/$defs/runtime"
+                },
+                "minItems": 3,
+                "maxItems": 3,
+                "uniqueItems": true
+              },
+              "native": false
+            }
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "kind"
+            ],
+            "properties": {
+              "kind": {
+                "const": "esm"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "runtimes": {
+                "$ref": "nako-manifest.schema.json#/$defs/esmRuntimes"
+              },
+              "native": false
+            }
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "kind"
+            ],
+            "properties": {
+              "kind": {
+                "const": "native-source"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "runtimes": {
+                "const": [
+                  "lnako"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "kind"
+            ],
+            "properties": {
+              "kind": {
+                "const": "native-prebuilt"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "runtimes": {
+                "const": [
+                  "lnako"
+                ]
+              },
+              "native": {
+                "type": "object",
+                "properties": {
+                  "target_triple": {
+                    "$ref": "#/$defs/targetTriple"
+                  },
+                  "abi_version": {
+                    "type": "integer"
+                  },
+                  "glibc_min": {
+                    "$ref": "#/$defs/glibcVersion"
+                  },
+                  "library_path": {
+                    "$ref": "nako-manifest.schema.json#/$defs/relativePath"
+                  }
+                },
+                "required": [
+                  "target_triple",
+                  "abi_version",
+                  "library_path"
+                ],
+                "if": {
+                  "required": [
+                    "target_triple"
+                  ],
+                  "properties": {
+                    "target_triple": {
+                      "type": "string",
+                      "pattern": "^[^-]+-linux-gnu(?![\\s\\S])"
+                    }
+                  }
+                },
+                "then": {
+                  "required": [
+                    "glibc_min"
+                  ]
+                },
+                "else": {
+                  "not": {
+                    "required": [
+                      "glibc_min"
+                    ]
+                  }
+                }
+              }
+            },
+            "required": [
+              "native"
+            ]
+          }
+        }
+      ]
+    },
+    "engines": {
+      "$ref": "nako-manifest.schema.json#/$defs/engines"
+    },
+    "exports": {
+      "$ref": "nako-manifest.schema.json#/$defs/exports"
+    },
+    "features": {
+      "$ref": "nako-manifest.schema.json#/$defs/features"
+    },
+    "dependencies": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/dependency"
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "package",
+    "artifact"
+  ],
+  "$defs": {
+    "kind": {
+      "enum": [
+        "universal",
+        "esm",
+        "native-source",
+        "native-prebuilt"
+      ]
+    },
+    "targetTriple": {
+      "type": "string",
+      "pattern": "^[a-z0-9_]+-[a-z0-9_]+-[a-z0-9_]+(?![\\s\\S])"
+    },
+    "glibcVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+(?:\\.[0-9]+)+(?![\\s\\S])"
+    },
+    "dependency": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "nako-manifest.schema.json#/$defs/packageId"
+        },
+        "req": {
+          "type": "string",
+          "minLength": 1
+        },
+        "features": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "default_features": {
+          "type": "boolean"
+        },
+        "optional": {
+          "type": "boolean"
+        },
+        "runtimes": {
+          "$ref": "nako-manifest.schema.json#/$defs/runtimes"
+        }
+      },
+      "required": [
+        "id",
+        "req"
+      ]
+    }
+  }
+}
