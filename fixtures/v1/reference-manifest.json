@@ -1,0 +1,89 @@
+{
+  "format": "nako-registry-reference/v1",
+  "commit": "af868c6976ab2d5432823c4341fbf27256d7a212",
+  "counts": {
+    "documents": 3,
+    "fixtures": 1,
+    "schemas": 7,
+    "samples": 7
+  },
+  "requirements_source": {
+    "path": "../requirements-2026-11-27.md",
+    "sha256": "749be3e73e2647b9f3fd658e4c5090c0b85435aef0a3112545c82f4d5368a045",
+    "in_repository": false
+  },
+  "files": [
+    {
+      "path": "docs/specification.md",
+      "sha256": "1f3e7fb4e4ee9c2b00220563ed43ae4987ab927914477b486171c226ef27e1cb"
+    },
+    {
+      "path": "docs/implementation-plan.md",
+      "sha256": "64e0d343abdba620d28ea4be41ec48429e7f316d643b748a58afa8ca328e4b46"
+    },
+    {
+      "path": "docs/open-questions.md",
+      "sha256": "177d073b219d4e85b19a798edc5dce4b40dabcbbae941f07de4f83ee99d29714"
+    },
+    {
+      "path": "fixtures/v1/conformance.md",
+      "sha256": "109b5060dfa3d9f158706e84e1754044c01ddc8ca01bdfe266ac5dfc984bc195"
+    },
+    {
+      "path": "schemas/v1/nako-manifest.schema.json",
+      "sha256": "e7a52cd66ee1d354d5ac0ca8725e30aea22d0d7a822692d932d2f7a6252e4c49"
+    },
+    {
+      "path": "schemas/v1/npkg-metadata.schema.json",
+      "sha256": "ec2cf97829b479c6e5ead74848090e571e2cffc90697cafe966d1338f4fedae3"
+    },
+    {
+      "path": "schemas/v1/npkg-files.schema.json",
+      "sha256": "0d9e99666f71c88d956927e5c2b345f35bd312a46dd9a4afeac577de9bc4f056"
+    },
+    {
+      "path": "schemas/v1/npkg-commands.schema.json",
+      "sha256": "5ce63459ea5bf69a7af89db262f12de7ef43c558201b26da8b90d4ceef364ebb"
+    },
+    {
+      "path": "schemas/v1/sparse-index-config.schema.json",
+      "sha256": "3c251b1417b23e4aedfa92bea430c7746ee33c38457f8b6d69a5d7325cad1a75"
+    },
+    {
+      "path": "schemas/v1/sparse-index-package.schema.json",
+      "sha256": "fe2669a5009ebdc6c4be6d41afd53ecc54d36ca837166fef13604060fa5c23c6"
+    },
+    {
+      "path": "schemas/v1/publish-release.schema.json",
+      "sha256": "83516959a06c62d68ff2b61f0f91baca3703419191742d9803928062538d8d38"
+    },
+    {
+      "path": "fixtures/v1/requirements/nako.toml",
+      "sha256": "5dbada570dc6b115cf3fefe2f971792685ae5f1742831079876c98162e56672f"
+    },
+    {
+      "path": "fixtures/v1/requirements/METADATA.toml",
+      "sha256": "38ae0c5d5b7f429a505838ca61b897c26ac5280ee7a3c546750aa7b8b50dd5d9"
+    },
+    {
+      "path": "fixtures/v1/requirements/FILES.json",
+      "sha256": "96a89443dde72aa29ddaf49a8ffaf0688d51729bc35f48793f987be8ebc2accc"
+    },
+    {
+      "path": "fixtures/v1/requirements/COMMANDS.json",
+      "sha256": "6f5baff7d78f6048c26e7904d5c8519d56d5f97e768cd11a5cb5c1d34640db6c"
+    },
+    {
+      "path": "fixtures/v1/requirements/config.json",
+      "sha256": "bfe439d9af3d64a75bdd2451b8b8466a23311a8a1025117ad1f4af53eb670cd6"
+    },
+    {
+      "path": "fixtures/v1/requirements/package.json",
+      "sha256": "99bc8408d77da8e0ba3a05585128afaf31af26ce7f0092da887a388258115f8c"
+    },
+    {
+      "path": "fixtures/v1/requirements/release.json",
+      "sha256": "023d4df113e85f2376b55865b5dc495095a35e5427105acf6c7ced960ddd606b"
+    }
+  ]
+}
