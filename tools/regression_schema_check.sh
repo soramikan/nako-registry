@@ -259,14 +259,40 @@ set -e
 grep -q 'API did not complete' "$tmp/id07-node-fail.out" || fail "ID-07 node startup failure: missing diagnostic"
 pass "ID-07 node startup failure exits 2"
 
+# Node は祖先ディレクトリの node_modules も探索するため、親に semver 7.7.4 の
+# mock を置いた状態を再現条件として固定する。
+mkdir -p "$tmp/node_modules/semver"
+printf '%s\n' '{"name":"semver","version":"7.7.4","main":"index.js"}' >"$tmp/node_modules/semver/package.json"
+printf '%s\n' 'module.exports = { satisfies: (version) => version === "1.9.0" };' >"$tmp/node_modules/semver/index.js"
+
 mkdir -p "$tmp/id07-missing"
 cp "$root/tools/id07/check.mjs" "$tmp/id07-missing/"
+# 隔離前は親 mock が解決され、期待結果を返して exit 0 になることを確認する。
+if ! node "$tmp/id07-missing/check.mjs" >"$tmp/id07-missing-parent.out" 2>&1; then
+  cat "$tmp/id07-missing-parent.out" >&2
+  fail "ID-07 missing dependency: parent mock was not resolved"
+fi
+grep -q '^ID-07 semver=7.7.4 first=true second=false$' "$tmp/id07-missing-parent.out" || {
+  cat "$tmp/id07-missing-parent.out" >&2
+  fail "ID-07 missing dependency: parent mock did not produce the expected result"
+}
+
+# check.mjs の隣の semver を exports で存在しないファイルへ向け、親 mock を
+# 探索させずに依存欠落を再現する。missing.cjs は意図的に作成しない。
+mkdir -p "$tmp/id07-missing/node_modules/semver"
+printf '%s\n' '{"name":"semver","exports":"./missing.cjs"}' >"$tmp/id07-missing/node_modules/semver/package.json"
 set +e
 node "$tmp/id07-missing/check.mjs" >"$tmp/id07-missing.out" 2>&1
 rc=$?
 set -e
-[ "$rc" -eq 2 ] || fail "ID-07 missing dependency: expected exit 2, got $rc"
-grep -q 'FAIL ID-07 dependency' "$tmp/id07-missing.out" || fail "ID-07 missing dependency: missing diagnostic"
+[ "$rc" -eq 2 ] || {
+  cat "$tmp/id07-missing.out" >&2
+  fail "ID-07 missing dependency: expected exit 2, got $rc"
+}
+grep -Eq "^FAIL ID-07 dependency: Cannot find module '.*[\\/]semver[\\/]missing\.cjs'$" "$tmp/id07-missing.out" || {
+  cat "$tmp/id07-missing.out" >&2
+  fail "ID-07 missing dependency: missing.cjs diagnostic"
+}
 pass "ID-07 missing dependency exits 2"
 
 mkdir -p "$tmp/id07-wrong-result/node_modules/semver"
