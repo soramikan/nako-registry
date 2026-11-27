@@ -16,6 +16,11 @@ PASS COMMANDS.json -> npkg-commands.schema.json
 PASS config.json -> sparse-index-config.schema.json
 PASS package.json -> sparse-index-package.schema.json
 PASS release.json -> publish-release.schema.json
+PASS local-only manifest without publication fields
+PASS empty range string
+PASS native-source ABI, artifact entries and dependency permissions
+PASS opaque scope ID and yank reason
+PASS external reference shape (publication disabled for initial deployment)
 PASS reject unknown manifest field (additionalProperties)
 PASS reject unscoped ID (pattern)
 PASS reject uppercase ID (pattern)
@@ -28,12 +33,20 @@ PASS reject non-UTC date (pattern)
 PASS reject HTTP artifact URL (pattern)
 PASS reject no upload parts declared (minItems)
 PASS reject uppercase SHA-256 (pattern)
+PASS reject native-source without native table (required)
+PASS reject native-source without ABI (required)
+PASS reject invalid artifact entry path (pattern)
+PASS reject malformed dependency permission (type)
+PASS reject yanked without reason (required)
+PASS reject yanked with blank reason (pattern)
 OBSERVED sample mismatch: extra export in METADATA.toml: ./client
 ```
 
 最後の行は二つのファイルに対するキー集合の比較結果。要件のサンプルには同一 ZIP 用に組み合わせると一致しない項目がある。`METADATA.toml` にだけ存在する `./client` はその一例で、§3.5 に従うとこの組み合わせは拒否される。 [差異の詳細](open-questions.md)
 
-検証したのは個別のドキュメント構造と上記の比較。ZIP 実体、実サーバー、各ランタイムによる [適合性フィクスチャ](../fixtures/v1/conformance.md) の実行は実装時の作業となる。SPDX 式、SemVer Range の評価、ZIP や URL の配信元の検査も仕様本文の実行時の条件に含まれる。
+スキーマ検証では原文の7件と追加の受理例5件が通り、拒否例18件が期待どおり失敗した。外部参照は共通スキーマの構造を検証した。初版のサーバーは値のある `external_artifacts` を公開ポリシーで拒否する。
+
+範囲判定 ID-07 は `node-semver` 7.7.4 の CLI でも実行した。`1.9.0` は適合し、caret 上限の `2.0.0-alpha.2` は不適合（終了コード1）。各処理系の実装、ZIP 実体、実サーバーを使う [適合性フィクスチャ](../fixtures/v1/conformance.md) は実装時に実行する。
 
 ## 再現手順
 
@@ -96,6 +109,40 @@ for filename, name in pairs.items():
     instances[filename] = instance
     print(f"PASS {filename} -> {name}.schema.json")
 
+local_manifest = tomllib.loads("schema_version = 1\n[package]\n")
+validators["nako.toml"].validate(local_manifest)
+print("PASS local-only manifest without publication fields")
+
+engines = deepcopy(instances["nako.toml"])
+engines["package"]["engines"]["lnako"] = ""
+validators["nako.toml"].validate(engines)
+print("PASS empty range string")
+
+native_source = deepcopy(instances["METADATA.toml"])
+native_source["artifact"] = {
+    "kind": "native-source", "runtimes": ["lnako"], "native": {"abi_version": 1},
+    "entries": {".": "native/build.zig"},
+}
+native_source["dependencies"][0].update(alias="json_local", allow_global_commands=True)
+validators["METADATA.toml"].validate(native_source)
+instances["native-source variant"] = native_source
+validators["native-source variant"] = validators["METADATA.toml"]
+print("PASS native-source ABI, artifact entries and dependency permissions")
+
+yanked = deepcopy(instances["package.json"])
+yanked["scope_id"] = "sc01"
+yanked["versions"][0].update(yanked=True, yank_reason="新版へ更新")
+validators["package.json"].validate(yanked)
+instances["yanked variant"] = yanked
+validators["yanked variant"] = validators["package.json"]
+print("PASS opaque scope ID and yank reason")
+
+external_shape = deepcopy(instances["release.json"])
+external_shape["external_artifacts"] = [{"url": "https://repo.example.invalid/demo.npkg",
+    "sha256": external_shape["uploaded_artifacts"][0]["sha256"]}]
+validators["release.json"].validate(external_shape)
+print("PASS external reference shape (publication disabled for initial deployment)")
+
 cases = [
     ("unknown manifest field", "nako.toml", (), "legacy", True, "additionalProperties"),
     ("unscoped ID", "nako.toml", ("package",), "id", "http", "pattern"),
@@ -109,6 +156,12 @@ cases = [
     ("HTTP artifact URL", "package.json", ("versions", 0, "artifacts", 0), "url", "http://cdn.example.invalid/a.npkg", "pattern"),
     ("no upload parts declared", "release.json", (), "uploaded_artifacts", [], "minItems"),
     ("uppercase SHA-256", "release.json", ("uploaded_artifacts", 0), "sha256", "sha256:" + "A" * 64, "pattern"),
+    ("native-source without native table", "native-source variant", ("artifact",), "native", None, "required"),
+    ("native-source without ABI", "native-source variant", ("artifact", "native"), "abi_version", None, "required"),
+    ("invalid artifact entry path", "native-source variant", ("artifact", "entries"), ".", "/native/build.zig", "pattern"),
+    ("malformed dependency permission", "native-source variant", ("dependencies", 0), "allow_global_commands", "true", "type"),
+    ("yanked without reason", "yanked variant", ("versions", 0), "yank_reason", None, "required"),
+    ("yanked with blank reason", "yanked variant", ("versions", 0), "yank_reason", " ", "pattern"),
 ]
 for label, filename, location, name, value, keyword in cases:
     instance = deepcopy(instances[filename])
@@ -129,5 +182,11 @@ assert metadata_exports - commands_exports == {"./client"}
 assert not commands_exports - metadata_exports
 print("OBSERVED sample mismatch: extra export in METADATA.toml: ./client")
 PY
+```
 
+範囲判定 ID-07 は次のコマンドで再現できる。1つ目は `1.9.0` を出力して成功し、2つ目は出力なしで終了コード1を返す。
+
+```sh
+npm exec --yes --package=semver@7.7.4 -- semver -r '^1.2.3' 1.9.0
+npm exec --yes --package=semver@7.7.4 -- semver -r '^1.2.3 >=2.0.0-alpha.1' 2.0.0-alpha.2
 ```

@@ -152,20 +152,44 @@
         "provenance",
         "artifacts"
       ],
-      "if": {
-        "properties": {
-          "exports_global_commands": {
-            "const": false
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "exports_global_commands": {
+                "const": false
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "global_commands": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "yanked": {
+                "const": true
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "yank_reason"
+            ],
+            "properties": {
+              "yank_reason": {
+                "type": "string",
+                "pattern": "\\S"
+              }
+            }
           }
         }
-      },
-      "then": {
-        "properties": {
-          "global_commands": {
-            "maxItems": 0
-          }
-        }
-      }
+      ]
     },
     "artifact": {
       "type": "object",

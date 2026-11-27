@@ -59,6 +59,16 @@
               "type": "integer"
             }
           }
+        },
+        "entries": {
+          "type": "object",
+          "description": "公開サブパスごとのアーカイブ内パス。省略したキーは共通 exports の entry を使う。",
+          "propertyNames": {
+            "$ref": "nako-manifest.schema.json#/$defs/subpath"
+          },
+          "additionalProperties": {
+            "$ref": "nako-manifest.schema.json#/$defs/relativePath"
+          }
         }
       },
       "required": [
@@ -129,8 +139,16 @@
                 "const": [
                   "lnako"
                 ]
+              },
+              "native": {
+                "required": [
+                  "abi_version"
+                ]
               }
-            }
+            },
+            "required": [
+              "native"
+            ]
           }
         },
         {
@@ -249,8 +267,7 @@
           "$ref": "nako-manifest.schema.json#/$defs/packageId"
         },
         "req": {
-          "type": "string",
-          "minLength": 1
+          "$ref": "nako-manifest.schema.json#/$defs/semverRange"
         },
         "features": {
           "type": "array",
@@ -266,6 +283,14 @@
         },
         "runtimes": {
           "$ref": "nako-manifest.schema.json#/$defs/runtimes"
+        },
+        "alias": {
+          "type": "string",
+          "minLength": 1
+        },
+        "allow_global_commands": {
+          "type": "boolean",
+          "default": false
         }
       },
       "required": [

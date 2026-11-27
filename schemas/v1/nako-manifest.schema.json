@@ -240,16 +240,13 @@
       "type": "object",
       "properties": {
         "lnako": {
-          "type": "string",
-          "minLength": 1
+          "$ref": "#/$defs/semverRange"
         },
         "cnako": {
-          "type": "string",
-          "minLength": 1
+          "$ref": "#/$defs/semverRange"
         },
         "wnako": {
-          "type": "string",
-          "minLength": 1
+          "$ref": "#/$defs/semverRange"
         }
       },
       "additionalProperties": false
@@ -289,15 +286,13 @@
       "additionalProperties": {
         "anyOf": [
           {
-            "type": "string",
-            "minLength": 1
+            "$ref": "#/$defs/semverRange"
           },
           {
             "type": "object",
             "properties": {
               "version": {
-                "type": "string",
-                "minLength": 1
+                "$ref": "#/$defs/semverRange"
               },
               "alias": {
                 "type": "string",
@@ -310,7 +305,8 @@
                 }
               },
               "allow_global_commands": {
-                "type": "boolean"
+                "type": "boolean",
+                "default": false
               }
             },
             "required": [
@@ -322,6 +318,10 @@
       "propertyNames": {
         "$ref": "#/$defs/packageId"
       }
+    },
+    "semverRange": {
+      "type": "string",
+      "description": "node-semver 7.7.4 の既定の範囲構文。文法と適合判定は利用側で検証する。"
     }
   }
 }
